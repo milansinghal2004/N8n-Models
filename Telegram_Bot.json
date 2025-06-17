@@ -1,0 +1,479 @@
+{
+  "name": "Telegram Bot",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        80,
+        -220
+      ],
+      "id": "4266d4ac-e71a-4772-bcff-61c0c94d789c",
+      "name": "Telegram Trigger",
+      "webhookId": "37ca51ac-c9db-45f4-820b-6a735dc9a75a",
+      "credentials": {
+        "telegramApi": {
+          "id": "3X9kikXjJ4kLLBRj",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "=You are a proactive and reliable AI assistant designed to support professional communication and scheduling tasks.\n\nEmail Retrieval: Before composing or sending any email, you must first retrieve the recipient's email address using the integrated CRM tool.\n\nMeeting Scheduling: If instructed to schedule events such as meetings via Google Calendar:\n\nGenerate and attach the appropriate Google Meet link.\n\nInclude this link clearly in the email body when sending it to the concerned recipient.\n\nDate and Time Reference: Always include the current date and time using the dynamic placeholder: {{ $now }}.\n\nEmail Signature Guidelines:\n\nAfter the closing salutation (e.g., Regards, Best wishes, Sincerely, etc.), insert a line break.\n\nOn the next line, include the sender's name exactly as: Milan Singhal.\n\nEnsure the signature is neatly formatted and placed consistently at the end of every email.\n\nMaintain a polite, concise, and professional tone in all messages. Adhere strictly to formatting standards to ensure clarity and consistency in communication."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        420,
+        -220
+      ],
+      "id": "f638a565-6920-4294-bde2-3fa1f9c97f87",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-preview-04-17",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        160,
+        100
+      ],
+      "id": "e0687ef7-a586-495f-aefd-f85c4b06111b",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "QefzMRtH9h7Q8T60",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.message.from.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        460,
+        100
+      ],
+      "id": "ca8accdf-6ea6-425a-ba23-8fcc55fc3f98",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        1100,
+        160
+      ],
+      "id": "2a530f32-fb20-4e04-be3d-706741cc41d1",
+      "name": "Gmail",
+      "webhookId": "151c5af0-e74a-4ab0-9568-7b2cba1bf605",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "fpO20XPJLuYdajS9",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=Get the row(s) in the sheet in Google Sheets containing details of a few persons.\nUse them to read, write, update changes, and perform tasks prompted by the user.\n\nFurthe after completing the task mail them by using their email id from the CRM sheet. And mention the Dat and Time as well like {{ $now }}",
+        "documentId": {
+          "__rl": true,
+          "value": "1UiI4SMsqnoou9f2tcFCr3RItYqEEU3vXLUArr5oK8JQ",
+          "mode": "list",
+          "cachedResultName": "crm",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UiI4SMsqnoou9f2tcFCr3RItYqEEU3vXLUArr5oK8JQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UiI4SMsqnoou9f2tcFCr3RItYqEEU3vXLUArr5oK8JQ/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        1020,
+        -40
+      ],
+      "id": "2a988779-4b54-4ba1-8255-85b859d30a93",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YnGcj6g5iMnvSePt",
+          "name": "crm"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "jalajmilan7@gmail.com",
+          "mode": "list",
+          "cachedResultName": "jalajmilan7@gmail.com"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "additionalFields": {
+          "description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Description', ``, 'string') }}",
+          "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        1260,
+        160
+      ],
+      "id": "0c82d0b4-074e-4d19-b4a2-fdba22dc8dd3",
+      "name": "Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "xY9KpDPfWZWLDnpx",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        800,
+        120
+      ],
+      "id": "5e14d3b2-c098-469f-adf2-cce60e5cd105",
+      "name": "SerpAPI",
+      "credentials": {
+        "serpApi": {
+          "id": "ra41XBQra4eMmkSJ",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1UiI4SMsqnoou9f2tcFCr3RItYqEEU3vXLUArr5oK8JQ",
+          "mode": "list",
+          "cachedResultName": "crm",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UiI4SMsqnoou9f2tcFCr3RItYqEEU3vXLUArr5oK8JQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UiI4SMsqnoou9f2tcFCr3RItYqEEU3vXLUArr5oK8JQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Name', ``, 'string') }}",
+            "Phone Number": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Phone_Number', ``, 'string') }}",
+            "Email Address": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Email_Address', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Address",
+              "displayName": "Email Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        1160,
+        -40
+      ],
+      "id": "515289d9-2770-4bdc-bd9e-8a4f91eaa4c8",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YnGcj6g5iMnvSePt",
+          "name": "crm"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1UiI4SMsqnoou9f2tcFCr3RItYqEEU3vXLUArr5oK8JQ",
+          "mode": "list",
+          "cachedResultName": "crm",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UiI4SMsqnoou9f2tcFCr3RItYqEEU3vXLUArr5oK8JQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UiI4SMsqnoou9f2tcFCr3RItYqEEU3vXLUArr5oK8JQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "Email Address"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Address",
+              "displayName": "Email Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        1300,
+        -40
+      ],
+      "id": "c9471b26-a2a3-49a8-b7c9-6fcd23de2e51",
+      "name": "Google Sheets2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YnGcj6g5iMnvSePt",
+          "name": "crm"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        780,
+        -220
+      ],
+      "id": "ceac0e3f-5750-411d-8b43-ad49e3ed156d",
+      "name": "Telegram",
+      "webhookId": "58ef9a1a-7f98-4c4e-ad8c-6c5f25f5f7c9",
+      "credentials": {
+        "telegramApi": {
+          "id": "3X9kikXjJ4kLLBRj",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets2": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "db960b72-040b-459f-9bfd-18ede0a7d6dc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ab99989c3286e2b80328d2017837d6363d26d9f59c62cc12df7a1b35bd317d6d"
+  },
+  "id": "KnaisWmvCEwP0ZrV",
+  "tags": []
+}

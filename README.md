@@ -10,3 +10,4 @@ It can:
   ->  Send emails to the person you want (also, if required, from the CRM sheet)
   ->  Update the CRM Sheet.
 ```
+ 
